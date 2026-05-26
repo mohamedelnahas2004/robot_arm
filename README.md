@@ -65,7 +65,7 @@ robot_arm/
 
 ```bash
 sudo apt update
-sudo apt install ros-jazzy-trac-ik-kinematics-plugin ros-jazzy-stomp-moveit ros-jazzy-cv-bridge ros-jazzy-moveit-servo
+sudo apt install ros-jazzy-pick-ik ros-jazzy-stomp-moveit ros-jazzy-cv-bridge ros-jazzy-moveit-servo
 pip install opencv-python ultralytics mediapipe "numpy<2" --break-system-packages
 git clone https://github.com/mohamedelnahas2004/robot_arm.git
 cd ~/robot_ws
