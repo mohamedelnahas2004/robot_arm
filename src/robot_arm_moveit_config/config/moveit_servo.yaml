@@ -1,0 +1,43 @@
+servo_node:
+  ros__parameters:
+    moveit_servo:
+      move_group_name: arm
+      ee_frame_name: Link_6_1
+      robot_link_command_frame: base_link
+
+      command_out_type: trajectory_msgs/JointTrajectory
+      publish_period: 0.034
+      max_expected_latency: 0.1
+
+      cartesian_command_in_topic: /servo_node/delta_twist_cmds
+      command_out_topic: /arm_controller/joint_trajectory
+      joint_topic: /joint_states
+      status_topic: /servo_node/status
+
+      lower_singularity_threshold: 17.0
+      hard_stop_singularity_threshold: 30.0
+      joint_limit_margin: 0.01
+      leaving_singularity_threshold_multiplier: 2.0
+
+      joint_limit_margin: 0.1
+
+      check_collisions: true
+      collision_check_rate: 10.0
+      self_collision_proximity_threshold: 0.01
+      scene_collision_proximity_threshold: 0.02
+
+      scale:
+        linear: 0.1
+        rotational: 0.4
+        joint: 0.1
+
+      joints:
+        - joint_1
+        - joint_2
+        - joint_3
+        - joint_4
+        - joint_5
+        - joint_6
+
+      use_smoothing: true
+      smoothing_filter_plugin_name: "online_signal_smoothing::ButterworthFilterPlugin"

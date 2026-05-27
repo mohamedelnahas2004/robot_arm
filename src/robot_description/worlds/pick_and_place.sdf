@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="pick_and_place_world">
+    <!-- Essential Gazebo Harmonic Plugins -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"></plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"></plugin>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"></plugin>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    
+    <!-- The Sun -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- The Ground -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <material><ambient>0.8 0.8 0.8 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- The Table (placed 40cm in front of the robot) -->
+    <model name="table">
+      <static>true</static>
+      <pose>0.4 0 0.1 0 0 0</pose> <!-- x=0.4m, z=0.1m height -->
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.4 0.6 0.2</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.4 0.6 0.2</size></box></geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+            <pbr>
+              <metal>
+                <albedo_map>materials/textures/chessboard.png</albedo_map>
+                <scale>0.05 0.05</scale> 
+              </metal>
+            </pbr>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- The Red Ball (placed on top of the table) -->
+    <model name="red_ball">
+      <static>false</static>
+      <pose>0.4 0.1 0.22 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><sphere><radius>0.014</radius></sphere></geometry></collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.014</radius></sphere></geometry>
+          <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+        </visual>
+        <inertial><mass>0.05</mass><inertia><ixx>1e-5</ixx><iyy>1e-5</iyy><izz>1e-5</izz></inertia></inertial>
+      </link>
+    </model>
+
+    <model name="red_ball_2">
+      <static>false</static>
+      <pose>0.5 0.0 0.22 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><sphere><radius>0.014</radius></sphere></geometry></collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.014</radius></sphere></geometry>
+          <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+        </visual>
+        <inertial><mass>0.05</mass><inertia><ixx>1e-5</ixx><iyy>1e-5</iyy><izz>1e-5</izz></inertia></inertial>
+      </link>
+    </model>
+
+    <!-- The Green Ball (placed on top of the table) -->
+    <model name="green_ball">
+      <static>false</static>
+      <pose>0.4 0.2 0.22 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><sphere><radius>0.014</radius></sphere></geometry></collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.014</radius></sphere></geometry>
+          <material><ambient>0 1 0 1</ambient><diffuse>0 1 0 1</diffuse></material>
+        </visual>
+        <inertial><mass>0.05</mass><inertia><ixx>1e-5</ixx><iyy>1e-5</iyy><izz>1e-5</izz></inertia></inertial>
+      </link>
+    </model>
+
+    <!-- The Blue Target Box (placed on the other side of the table) -->
+    <model name="open_box">
+      <static>true</static>
+      <pose>0.4 -0.15 0.2 0 0 0</pose> 
+      
+      <link name="floor">
+        <pose>0 0 0 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.2 0.2 0.02</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 0.2 0.02</size></box></geometry><material><ambient>0 0 1 1</ambient><diffuse>0 0 1 1</diffuse></material></visual>
+      </link>
+      <link name="left_wall">
+        <pose>0 0.09 0 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.2 0.02 0.1</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 0.02 0.1</size></box></geometry><material><ambient>0 0 1 1</ambient><diffuse>0 0 1 1</diffuse></material></visual>
+      </link>
+      <link name="right_wall">
+        <pose>0 -0.09 0 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.2 0.02 0.1</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 0.02 0.1</size></box></geometry><material><ambient>0 0 1 1</ambient><diffuse>0 0 1 1</diffuse></material></visual>
+      </link>
+      <link name="front_wall">
+        <pose>0.09 0 0 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.02 0.16 0.1</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.02 0.16 0.1</size></box></geometry><material><ambient>0 0 1 1</ambient><diffuse>0 0 1 1</diffuse></material></visual>
+      </link>
+      <link name="back_wall">
+        <pose>-0.09 0 0 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.02 0.16 0.1</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.02 0.16 0.1</size></box></geometry><material><ambient>0 0 1 1</ambient><diffuse>0 0 1 1</diffuse></material></visual>
+      </link>
+    </model>
+    
+  </world>
+</sdf>
