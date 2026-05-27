@@ -85,10 +85,6 @@ ros2 launch robot_arm_moveit_config sim_moveit.launch.py
 #teleoperated mode:
 source install/setup.bash
 ros2 launch robot_arm_moveit_config sim_moveit.launch.py mode:=teleop
-
-#in another terminal for the teleoperated mode:
-source install/setup.bash
-ros2 launch robot_arm_moveit_config teleop.launch.py
 ```
 
 ---
