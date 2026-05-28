@@ -24,6 +24,10 @@ class HandTeleopNode(Node):
         
         self.cap = cv2.VideoCapture(0)
         
+        # --- TOGGLE MEMORY VARIABLES ---
+        self.e_stop_active = False         
+        self.is_doing_thumbs_up = False    
+        
         self.timer = self.create_timer(0.033, self.timer_callback)
 
     def timer_callback(self):
@@ -52,27 +56,39 @@ class HandTeleopNode(Node):
                 if index_tip.y > index_mcp.y and middle_tip.y > middle_mcp.y:
                     gripper_state = "CLOSED"
 
-                safety_state = "GO"
+                # 1. Check if the physical gesture is happening right now
+                current_gesture_is_thumbs_up = False
                 if gripper_state == "CLOSED":
                     palm_length = get_distance(wrist, index_mcp)
                     thumb_extension = get_distance(thumb_tip, index_mcp)
                     if thumb_extension > (palm_length * 0.6) and thumb_tip.y < index_mcp.y:
-                        safety_state = "E-STOP"
+                        current_gesture_is_thumbs_up = True
+
+                # 2. Toggle the E-STOP state ONLY on the exact frame the gesture starts
+                if current_gesture_is_thumbs_up and not self.is_doing_thumbs_up:
+                    self.e_stop_active = not self.e_stop_active
                 
-                payload = {
-                    "x": round(wrist.x, 3),
-                    "y": round(wrist.y, 3),
-                    "z": round(hand_depth_metric, 3),
-                    "gripper": gripper_state,
-                    "safety": safety_state
-                }
+                # 3. Update the gesture tracker for the next frame
+                self.is_doing_thumbs_up = current_gesture_is_thumbs_up
+
+                # 4. ONLY send the ROS message if the E-STOP is OFF
+                if not self.e_stop_active:
+                    payload = {
+                        "x": round(wrist.x, 3),
+                        "y": round(wrist.y, 3),
+                        "z": round(hand_depth_metric, 3),
+                        "gripper": gripper_state,
+                        "safety": "GO"
+                    }
+                    
+                    msg = String()
+                    msg.data = json.dumps(payload)
+                    self.publisher_.publish(msg)
                 
-                msg = String()
-                msg.data = json.dumps(payload)
-                self.publisher_.publish(msg)
-                
-                # UI Overlay
-                cv2.putText(frame, f"Gripper: {gripper_state} | Safety: {safety_state}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+                # UI Overlay: Turns Red and shows "MUTED" when E-STOP is active
+                safety_text = "E-STOP (MUTED)" if self.e_stop_active else "GO (TRANSMITTING)"
+                text_color = (0, 0, 255) if self.e_stop_active else (0, 255, 0)
+                cv2.putText(frame, f"Gripper: {gripper_state} | Safety: {safety_text}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, text_color, 2)
 
         cv2.imshow('ROS 2 Teleop Tracker', frame)
         cv2.waitKey(1)
