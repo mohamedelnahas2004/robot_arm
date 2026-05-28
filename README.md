@@ -55,7 +55,7 @@ robot_arm/
 - MoveIt2
 - ros2_control
 - colcon
-- trac-ik
+- pick-ik
 - stomp
 - gazebo harmonic
 
@@ -79,11 +79,9 @@ source install/setup.bash
 
 ```bash
 #autonomous mode:
-source install/setup.bash
 ros2 launch robot_arm_moveit_config sim_moveit.launch.py
 
 #teleoperated mode:
-source install/setup.bash
 ros2 launch robot_arm_moveit_config sim_moveit.launch.py mode:=teleop
 ```
 
