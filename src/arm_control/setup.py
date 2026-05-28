@@ -32,7 +32,9 @@ setup(
             'vision_node = arm_control.vision_node:main',
             'tracker_node = arm_control.tracker_node:main',
             'translator_node = arm_control.translator_node:main',
-            'teleop_init    = arm_control.teleop_init_node:main'
+            'teleop_init    = arm_control.teleop_init_node:main',
+            'rviz_ghost_node    = arm_control.rviz_ghost_node:main'
+            
         ],
     },
 )
