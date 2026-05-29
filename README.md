@@ -100,8 +100,8 @@ ros2 launch robot_arm_moveit_config sim_moveit.launch.py mode:=teleop
 
 | Name | Role / GitHub |
 |------|--------|
-| Mohamed Abdel Aal | [@mohamedelnahas2004](https://github.com/mohamedelnahas2004) |
 | Eyad Mezed | [@eyadmzed](https://github.com/eyadmzed) |
+| Mohamed Abdel Aal | [@mohamedelnahas2004](https://github.com/mohamedelnahas2004) |
 | Mahmoud Farrag | [@mamfmahmoud](https://github.com/mamfmahmoud) |
 | Andrew Usama | [@Andrew-Usama](https://github.com/Andrew-Usama) |
 | Mohamed Abd Elmonem | [@men3emhoa](https://github.com/men3emhoa) |
