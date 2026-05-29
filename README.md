@@ -66,7 +66,7 @@ pip install opencv-python ultralytics mediapipe "numpy<2" --break-system-package
 # 2. Create the workspace and clone the repository
 mkdir -p ~/robot_ws/src
 cd ~/robot_ws/src
-git clone [https://github.com/mohamedelnahas2004/robot_arm.git](https://github.com/mohamedelnahas2004/robot_arm.git)
+git clone https://github.com/mohamedelnahas2004/robot_arm.git
 
 # 3. Install missing ROS dependencies automatically
 cd ~/robot_ws
