@@ -43,10 +43,6 @@ def rot_z(q):
                      [0, 0, 0, 1]])
 
 class IKSolver:
-    """
-    Damped Least Squares IK solver customized with the exact
-    forward kinematics and joint limits of your custom URDF.
-    """
     LIMITS = [
         (-3.14159, 3.14159), # joint_1
         (-1.57, 1.57),       # joint_2
@@ -231,7 +227,7 @@ class CustomArmDecoupledNode(Node):
                 self.smooth_j2 = (self.ALPHA * solved_joints[1]) + ((1 - self.ALPHA) * self.smooth_j2)
                 self.smooth_j3 = (self.ALPHA * solved_joints[2]) + ((1 - self.ALPHA) * self.smooth_j3)
                 self.smooth_j4 = 0.0
-                self.smooth_j5 = -0.8  
+                self.smooth_j5 = -1.0  
                 self.smooth_j6 = 0.0
 
             traj = JointTrajectory()
