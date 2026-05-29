@@ -22,7 +22,8 @@ The arm operates independently using an overhead camera mounted perpendicular to
 * **Dynamic Logic:** The system continuously generates pick-and-place coordinates for detected balls, automatically filtering out and ignoring objects that have successfully been placed inside the box.
 * **Kinematics:** Powered by **MoveIt 2** utilizing the `pick_ik` solver for collision-aware motion planning and trajectory execution.
 
-*(Insert a GIF or link to your Autonomous Mode video here)*
+<img width="800" height="450" alt="autonomous" src="https://github.com/user-attachments/assets/533c2385-e0a9-4dd4-a6d5-be2edabc55e5" />
+
 
 ### 2. Gesture Teleoperation Mode
 A decoupled, low-latency manual control mode driven entirely by human hand tracking.
@@ -30,7 +31,7 @@ A decoupled, low-latency manual control mode driven entirely by human hand track
 * **Smart Macros:** Moving the open hand translates to X/Y workspace movement. Closing the hand into a fist triggers an automated "plunge-and-grasp" macro. Opening the hand instantly releases the payload. A "thumbs-up" gesture triggers a system-wide E-STOP, freezing all motor commands.
 * **Kinematics:** Bypasses MoveIt entirely. Utilizes a highly optimized, custom **Damped Least Squares (DLS) IK Solver** written specifically for this robot's geometry to ensure fluid, zero-lag tracking.
 
-*(Insert a GIF or link to your Teleoperation Mode video here)*
+<img width="800" height="450" alt="teleop" src="https://github.com/user-attachments/assets/f9d12e7c-d0a9-4590-ade5-815906d13e25" />
 
 ---
 
