@@ -72,7 +72,7 @@ def generate_launch_description():
         parameters=[moveit_config.to_dict(), {'use_sim_time': True}]
     )
     vision_delayed = TimerAction(
-        period=7.0,
+        period=15.0,
         actions=[Node(
             package='arm_control',
             executable='vision_node',
@@ -107,28 +107,37 @@ def generate_launch_description():
         package='arm_control',
         executable='tracker_node',
         output='screen',
-        parameters=[moveit_config.robot_description, {'use_sim_time': True}]
+        parameters=[moveit_config.robot_description, {'use_sim_time': True}],
+        condition=IfCondition(PythonExpression(["'", mode, "' == 'teleop'"]))
     )
     
     translator = Node(
         package='arm_control',
         executable='translator_node',
         output='screen',
-        parameters=[moveit_config.robot_description, {'use_sim_time': True}]
+        parameters=[moveit_config.robot_description, {'use_sim_time': True}],
+        condition=IfCondition(PythonExpression(["'", mode, "' == 'teleop'"]))
     )
 
-    jsb_spawner     = Node(package="controller_manager", executable="spawner",
-                           arguments=["joint_state_broadcaster"])
-    arm_spawner     = Node(package="controller_manager", executable="spawner",
-                           arguments=["arm_controller"])
-    gripper_spawner = Node(package="controller_manager", executable="spawner",
-                           arguments=["gripper_controller"])
+    jsb_spawner = Node(
+        package="controller_manager", 
+        executable="spawner",
+        arguments=["joint_state_broadcaster"]
+    )
+    arm_spawner = Node(
+        package="controller_manager", 
+        executable="spawner",
+        arguments=["arm_controller"]
+    )
+    gripper_spawner = Node(
+        package="controller_manager", 
+        executable="spawner",
+        arguments=["gripper_controller"]
+    )
 
-    load_controllers = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=spawn_entity,
-            on_exit=[jsb_spawner, arm_spawner, gripper_spawner]
-        )
+    load_controllers = TimerAction(
+        period=8.0,
+        actions=[jsb_spawner, arm_spawner, gripper_spawner]
     )
 
     pkg_install_dir   = get_package_prefix('robot_arm_moveit_config')

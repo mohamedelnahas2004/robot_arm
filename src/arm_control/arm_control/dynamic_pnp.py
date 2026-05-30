@@ -3,8 +3,8 @@ import json
 import time
 import rclpy
 from moveit.planning import MoveItPy
-from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped
+from std_srvs.srv import Trigger
 
 class PickAndPlace:
     
@@ -12,19 +12,15 @@ class PickAndPlace:
         self.moveit_robot = MoveItPy(node_name="dynamic_pnp")
         self.arm = self.moveit_robot.get_planning_component("arm")
         self.gripper = self.moveit_robot.get_planning_component("gripper")
-        self.is_busy = False
         
-        self.x_offset = 0.02 
-        self.y_offset = 0.0
+        self.node = rclpy.create_node("vision_client")
+        self.cli = self.node.create_client(Trigger, '/vision/get_targets')
+        self.is_busy = False
+        self.x_offset = 0.02
 
-        self.node = rclpy.create_node("vision_subscriber")
-        self.subscription = self.node.create_subscription(
-            String,
-            '/vision/targets',
-            self.vision_callback,
-            10
-        )
-        self.node.get_logger().info("System ready. Waiting for targets...")
+        # A timer that acts as our heartbeat. Every 3 seconds, we check if we should ask for work.
+        self.timer = self.node.create_timer(3.0, self.request_targets)
+        self.node.get_logger().info("System ready. Waiting for sorting targets...")
 
     def move_gripper(self, state_name):
         self.gripper.set_start_state_to_current_state()
@@ -86,23 +82,54 @@ class PickAndPlace:
         if plan and plan.trajectory:
             self.moveit_robot.execute(plan.trajectory, controllers=[])
             
-    def vision_callback(self, msg):
-        if self.is_busy: return
-        self.is_busy = True
+    def request_targets(self):
+        """ The heartbeat function. Asks the camera for data if the arm is idle. """
+        if self.is_busy:
+            return
+
+        if not self.cli.wait_for_service(timeout_sec=1.0):
+            return # meh not now
+
+        # خلص خش على اللي بعده
+        req = Trigger.Request()
+        future = self.cli.call_async(req)
+        future.add_done_callback(self.process_vision_response)
+
+    def process_vision_response(self, future):
+        """ The execution function. Runs when the camera replies. """
+        if self.is_busy:
+            return
 
         try:
-            targets = json.loads(msg.data)
-            box = targets['box']
-            balls = targets['balls']
+            response = future.result()
+            
+            if not response.success:
+                return 
+            self.is_busy = True
+            world_data = json.loads(response.message)
+            tasks = []
+            for color in ["red", "green", "blue"]:
+                box = world_data[color].get("box")
+                balls = world_data[color].get("balls", [])
+                if box:
+                    for b in balls:
+                        tasks.append({"pick": b, "drop": box})
 
-            for i, ball in enumerate(balls):
-                bx, by, bz = ball[0], ball[1], ball[2]
-                box_x, box_y, box_z = box[0], box[1], box[2]
+            if len(tasks) == 0:
+                self.is_busy = False
+                return
+
+            self.node.get_logger().info(f"Target Acquired! Executing {len(tasks)} tasks...")
+            time.sleep(1.0)
+            
+            # EXECUTE TASKS
+            for task in tasks:
+                bx, by, bz = task["pick"][0], task["pick"][1], task["pick"][2]
+                box_x, box_y, box_z = task["drop"][0], task["drop"][1], task["drop"][2]
                 
                 bx = bx + self.x_offset
-                by = by + self.y_offset
             
-                if not self.move_arm_to_pose(bx, by, bz + 0.10): continue
+                if not self.move_arm_to_pose(bx, by, bz + 0.15): continue
                 time.sleep(0.5)
                 
                 self.move_gripper("open")
@@ -123,7 +150,7 @@ class PickAndPlace:
                 self.move_gripper("open")
                 time.sleep(0.5)
 
-            self.node.get_logger().info("Job complete! Returning home...")
+            self.node.get_logger().info("Sorting complete! Returning home...")
             self.move_to_home()
             self.node.get_logger().info("Sequence Complete")
 
