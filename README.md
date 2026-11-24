@@ -140,9 +140,11 @@ This work is based on [Arctos-Robotics/ROS](https://github.com/Arctos-Robotics/R
 
 | Name | GitHub |
 |------|--------|
-| Eyad Mezed | [@EyadMzed](https://github.com/eyadmzed) |
 | Mohamed Abdel Aal | [@mohamedelnahas2004](https://github.com/mohamedelnahas2004) |
+| Eyad Mezed | [@EyadMzed](https://github.com/eyadmzed) |
+| Mahmoud Farrag | [@mamfmahmoud](https://github.com/mamfmahmoud) |
 | Andrew Usama | [@Andrew-Usama](https://github.com/Andrew-Usama) |
+| Mohamed Abd Elmonem | [@men3emhoa](https://github.com/men3emhoa) |
 
 ---
 
